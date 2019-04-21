@@ -118,7 +118,11 @@ public abstract class BaseBuilder {
     }
   }
 
-  //根据别名解析Class,其实是去查看 类型别名注册/事务管理器别名
+  /**
+   *   //根据别名解析Class,其实是去查看 类型别名注册/事务管理器别名
+   * @param alias
+   * @return
+   */
   protected Class<?> resolveClass(String alias) {
     if (alias == null) {
       return null;

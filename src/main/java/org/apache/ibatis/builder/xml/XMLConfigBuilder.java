@@ -305,11 +305,13 @@ public class XMLConfigBuilder extends BaseBuilder {
 //</settings>
   private void settingsElement(XNode context) throws Exception {
     if (context != null) {
+//      获取settings子节点中的内容
       Properties props = context.getChildrenAsProperties();
-      // Check that all settings are known to the configuration class
-      //检查下是否在Configuration类里都有相应的setter方法（没有拼写错误）
+      // 创建Configuration 类的"元信息"对象
       MetaClass metaConfig = MetaClass.forClass(Configuration.class);
       for (Object key : props.keySet()) {
+        // Check that all settings are known to the configuration class
+        //检查下是否在Configuration类里都有相应的setter方法（没有拼写错误）
         if (!metaConfig.hasSetter(String.valueOf(key))) {
           throw new BuilderException("The setting " + key + " is not known.  Make sure you spelled it correctly (case sensitive).");
         }

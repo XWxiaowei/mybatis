@@ -34,9 +34,16 @@ public class PropertyTokenizer implements Iterable<PropertyTokenizer>, Iterator<
 
   public PropertyTokenizer(String fullname) {
       //person[0].birthdate.year
-      //找.
+      //找.（检测传入的参数中是否宝航了字符'.'）
     int delim = fullname.indexOf('.');
     if (delim > -1) {
+      /*
+        以点位为界，进行分割。比如：
+        fullname=com.jay.mybatis
+        以第一个点为分界符：
+        name=com
+        children=jay.mybatis
+       */
       name = fullname.substring(0, delim);
       children = fullname.substring(delim + 1);
     } else {
@@ -48,7 +55,17 @@ public class PropertyTokenizer implements Iterable<PropertyTokenizer>, Iterator<
     //把中括号里的数字给解析出来
     delim = name.indexOf('[');
     if (delim > -1) {
+      /*
+      * 获取中括号里的内容，比如：
+      * 1. 对于数组或List集合：[]中的内容为数组下标，
+      * 比如fullname=articles[1],index=1
+      * 2.对于Map: []中的内容为键，
+      * 比如 fullname=xxxMap[keyName],index=keyName
+      *
+      * 关于 index 属性的用法，可以参考 BaseWrapper 的 getCollectionValue 方法
+      * */
       index = name.substring(delim + 1, name.length() - 1);
+//      获取分解符前面的内容，比如 fullname=articles[1],name=articles
       name = name.substring(0, delim);
     }
   }

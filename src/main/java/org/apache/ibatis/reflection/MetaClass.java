@@ -40,10 +40,12 @@ public class MetaClass {
   private Reflector reflector;
 
   private MetaClass(Class<?> type) {
+//    根据类型创建Reflector
     this.reflector = Reflector.forClass(type);
   }
 
   public static MetaClass forClass(Class<?> type) {
+//  调用构造器方法
     return new MetaClass(type);
   }
 
@@ -144,16 +146,27 @@ public class MetaClass {
     return null;
   }
 
+  /**
+   * 检查指定的属性是否有setter方法。
+   * @param name
+   * @return
+   */
   public boolean hasSetter(String name) {
+//    属性分词器,用于解析属性名
     PropertyTokenizer prop = new PropertyTokenizer(name);
+//    hasNext返回true,则表明是一个复合属性
     if (prop.hasNext()) {
+//      调用reflector的hasSetter方法
       if (reflector.hasSetter(prop.getName())) {
+//        为属性创建MetaClass
         MetaClass metaProp = metaClassForProperty(prop.getName());
+//        再次调用hasSetter
         return metaProp.hasSetter(prop.getChildren());
       } else {
         return false;
       }
     } else {
+      // 非复合属性则直接调用hasSetter一次即可
       return reflector.hasSetter(prop.getName());
     }
   }
