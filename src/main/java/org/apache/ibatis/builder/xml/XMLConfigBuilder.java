@@ -269,8 +269,10 @@ public class XMLConfigBuilder extends BaseBuilder {
         throw new BuilderException("The properties element cannot specify both a URL and a resource based property file reference.  Please specify one or the other.");
       }
       if (resource != null) {
+        //从文件系统中加载并解析属性文件
         defaults.putAll(Resources.getResourceAsProperties(resource));
       } else if (url != null) {
+        //通过url加载并解析属性文件
         defaults.putAll(Resources.getUrlAsProperties(url));
       }
       //3.Variables也全部加入Properties
@@ -279,6 +281,7 @@ public class XMLConfigBuilder extends BaseBuilder {
         defaults.putAll(vars);
       }
       parser.setVariables(defaults);
+      //4. 将属性值设置到configuration中
       configuration.setVariables(defaults);
     }
   }

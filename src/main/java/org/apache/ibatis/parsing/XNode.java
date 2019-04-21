@@ -311,7 +311,10 @@ public class XNode {
     }
   }
 
-  //得到孩子，原理是调用Node.getChildNodes
+  /**
+   *   //得到孩子，原理是调用Node.getChildNodes
+   * @return
+   */
   public List<XNode> getChildren() {
     List<XNode> children = new ArrayList<XNode>();
     NodeList nodeList = node.getChildNodes();
@@ -319,6 +322,7 @@ public class XNode {
       for (int i = 0, n = nodeList.getLength(); i < n; i++) {
         Node node = nodeList.item(i);
         if (node.getNodeType() == Node.ELEMENT_NODE) {
+//          将节点封装到XNode中并将XNode对象放入children列表中
           children.add(new XNode(xpathParser, node, variables));
         }
       }
@@ -326,13 +330,17 @@ public class XNode {
     return children;
   }
 
-  //得到孩子，返回Properties，孩子的格式肯定都有name,value属性
+  /**
+   *   //得到孩子，返回Properties，孩子的格式肯定都有name,value属性
+   * @return
+   */
   public Properties getChildrenAsProperties() {
     Properties properties = new Properties();
     for (XNode child : getChildren()) {
       String name = child.getStringAttribute("name");
       String value = child.getStringAttribute("value");
       if (name != null && value != null) {
+//        设置属性到属性对象中
         properties.setProperty(name, value);
       }
     }

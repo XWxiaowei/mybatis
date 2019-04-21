@@ -1,0 +1,14 @@
+@startuml
+autonumber
+actor Client
+Client -> SqlSessionFactoryBuilder : build(inputStream)
+activate SqlSessionFactoryBuilder
+SqlSessionFactoryBuilder -> XMLConfigBuilder :new XMLConfigBuilder(inputStream ...)
+activate XMLConfigBuilder
+SqlSessionFactoryBuilder -> XMLConfigBuilder :parse()
+XMLConfigBuilder --> SqlSessionFactoryBuilder : 返回Configuration 对象
+deactivate XMLConfigBuilder
+SqlSessionFactoryBuilder ->SqlSessionFactoryBuilder :build(configuration) 返回\nnew DefaultSqlSessionFactory(config)
+SqlSessionFactoryBuilder --> Client : 返回SqlSessionFactory实例
+deactivate SqlSessionFactoryBuilder
+@enduml
