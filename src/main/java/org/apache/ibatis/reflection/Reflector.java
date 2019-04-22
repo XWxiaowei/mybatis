@@ -539,17 +539,15 @@ public class Reflector {
     return caseInsensitivePropertyMap.get(name.toUpperCase(Locale.ENGLISH));
   }
 
-  /*
-   * Gets an instance of ClassInfo for the specified class.
-   * 得到某个类的反射器，是静态方法，而且要缓存，又要多线程，所以REFLECTOR_MAP是一个ConcurrentHashMap
-   *
-   * @param clazz The class for which to lookup the method cache.
-   * @return The method cache for the class
+  /**
+   * 得到某个类的反射器，是静态方法，而且要缓存，
+   * 又要多线程，所以REFLECTOR_MAP是一个ConcurrentHashMap
    */
   public static Reflector forClass(Class<?> clazz) {
     if (classCacheEnabled) {
       // synchronized (clazz) removed see issue #461
-        //对于每个类来说，我们假设它是不会变的，这样可以考虑将这个类的信息(构造函数，getter,setter,字段)加入缓存，以提高速度
+        //对于每个类来说，我们假设它是不会变的，这样可以考虑将这个类的信息
+      // (构造函数，getter,setter,字段)加入缓存，以提高速度
       Reflector cached = REFLECTOR_MAP.get(clazz);
       if (cached == null) {
         cached = new Reflector(clazz);
