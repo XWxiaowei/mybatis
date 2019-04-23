@@ -34,7 +34,7 @@ public class PropertyTokenizer implements Iterable<PropertyTokenizer>, Iterator<
 
   public PropertyTokenizer(String fullname) {
       //person[0].birthdate.year
-      //找.（检测传入的参数中是否宝航了字符'.'）
+      //找.（检测传入的参数中是否包含了字符'.'）
     int delim = fullname.indexOf('.');
     if (delim > -1) {
       /*

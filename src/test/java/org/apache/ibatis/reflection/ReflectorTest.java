@@ -46,6 +46,8 @@ public class ReflectorTest {
   static abstract class AbstractEntity implements Entity<Long> {
 
     private Long id;
+    private boolean sex;
+
 
     public Long getId() {
       return id;
@@ -54,9 +56,19 @@ public class ReflectorTest {
     public void setId(Long id) {
       this.id = id;
     }
+
+    public boolean isSex() {
+      return sex;
+    }
+
+    public void setSex(boolean sex) {
+      this.sex = sex;
+    }
+
   }
 
   static class Section extends AbstractEntity implements Entity<Long> {
+
   }
 
 }

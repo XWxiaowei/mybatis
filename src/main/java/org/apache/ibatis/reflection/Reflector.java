@@ -184,6 +184,8 @@ public class Reflector {
             /**
             * methodType 是getterType的子类，此时认为method方法更为合适，
              * 故将getter更新为method
+             * 例如：getterType 为java.lang.Object
+             * methodType 为 java.lang.Long
              */
           } else if (getterType.isAssignableFrom(methodType)) {
             getter = method;
@@ -195,6 +197,7 @@ public class Reflector {
           }
         }
 //       将筛选出的方法添加到getMethods中，并将方法返回值添加到getType中
+
         addGetMethod(propName, getter);
       }
     }
@@ -275,7 +278,7 @@ public class Reflector {
 //            获取参数类型
             if (method.getParameterTypes().length == 1
                 && expectedType.equals(method.getParameterTypes()[0])) {
-//              参数类型和返回类型一致，则认为是最好的选择，并结束循环
+//              setter方法的参数类型和其对应的getter方法返回类型一致，则认为是最好的选择，并结束循环
               setter = method;
               break;
             }
