@@ -1,0 +1,22 @@
+@startuml
+autonumber
+XMLConfigBuilder -> XPathParser : 调用evalNode("/configuration")
+activate XPathParser
+XPathParser -> XNode : 创建XNode实例
+activate XNode
+XNode -> XNode : 调用parseAttributes(node) \n进行参数解析
+XNode -> PropertyParser: parse(...) 传入原始参数
+activate PropertyParser
+PropertyParser -> GenericTokenParser :并调用parse(String)
+note right :第五步的注释 创建VariableTokenHandler\n和GenericTokenParser实例\nVariableTokenHandler中内置了\n一个Properties用于存放待替换的属性值
+activate GenericTokenParser
+GenericTokenParser -->PropertyParser: 返回解析后的参数
+deactivate GenericTokenParser
+PropertyParser --> XNode : 返回解析后的参数
+deactivate PropertyParser
+XNode --> XNode: 返回Properties 实例
+XNode --> XPathParser: 返回XNode实例
+deactivate XNode
+XPathParser-->XMLConfigBuilder : 返回XNode实例
+deactivate XPathParser
+@enduml
