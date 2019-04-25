@@ -224,6 +224,7 @@ public class ResolverUtil<T> {
       List<String> children = VFS.getInstance().list(path);
       for (String child : children) {
         if (child.endsWith(".class")) {
+          //将.class的class对象放入Set集合中，供后面调用
           addIfMatching(test, child);
         }
       }

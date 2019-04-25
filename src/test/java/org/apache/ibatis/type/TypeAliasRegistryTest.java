@@ -34,6 +34,13 @@ public class TypeAliasRegistryTest {
   }
 
   @Test
+  public void shouldRegisterAliases() {
+    TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
+    typeAliasRegistry.registerAliases("org.apache.ibatis.domain.misc");
+    assertEquals("org.apache.ibatis.domain.misc.RichType", typeAliasRegistry.resolveAlias("RichType").getName());
+
+  }
+  @Test
   public void shouldFetchArrayType() {
     TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
     assertEquals(Byte[].class, typeAliasRegistry.resolveAlias("byte[]"));

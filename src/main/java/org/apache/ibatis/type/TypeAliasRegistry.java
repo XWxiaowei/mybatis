@@ -144,15 +144,18 @@ public class TypeAliasRegistry {
     registerAliases(packageName, Object.class);
   }
 
-	//扫描并注册包下所有继承于superType的类型别名
+  /**
+   * 	//扫描并注册包下所有继承于superType的类型别名
+   * @param packageName
+   * @param superType
+   */
   public void registerAliases(String packageName, Class<?> superType){
-		//TODO ResolverUtil
     ResolverUtil<Class<?>> resolverUtil = new ResolverUtil<Class<?>>();
+    //扫描并注册包下所有继承于superType的类型别名
     resolverUtil.find(new ResolverUtil.IsA(superType), packageName);
     Set<Class<? extends Class<?>>> typeSet = resolverUtil.getClasses();
     for(Class<?> type : typeSet){
-      // Ignore inner classes and interfaces (including package-info.java)
-      // Skip also inner classes. See issue #6
+      //非匿名类及非接口及内部类及成员类才能注册别名
       if (!type.isAnonymousClass() && !type.isInterface() && !type.isMemberClass()) {
         registerAlias(type);
       }

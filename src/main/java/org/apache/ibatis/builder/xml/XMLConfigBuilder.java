@@ -387,14 +387,16 @@ public class XMLConfigBuilder extends BaseBuilder {
         String id = child.getStringAttribute("id");
 		//循环比较id是否就是指定的environment
         if (isSpecifiedEnvironment(id)) {
-          //7.1事务管理器
+          //1 创建事务工厂TransactionFactory
           TransactionFactory txFactory = transactionManagerElement(child.evalNode("transactionManager"));
-          //7.2数据源
+          //2创建数据源
           DataSourceFactory dsFactory = dataSourceElement(child.evalNode("dataSource"));
           DataSource dataSource = dsFactory.getDataSource();
+          //3.构建Environment对象
           Environment.Builder environmentBuilder = new Environment.Builder(id)
               .transactionFactory(txFactory)
               .dataSource(dataSource);
+//          将创建的Environment对象设置到configuration中
           configuration.setEnvironment(environmentBuilder.build());
         }
       }
