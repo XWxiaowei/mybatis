@@ -73,7 +73,7 @@ public class SqlSessionFactoryBuilder {
   }
 
   //以下3个方法都是调用下面第8种方法
-  public SqlSessionFactory build(InputStream inputStream) {
+    public SqlSessionFactory build(InputStream inputStream) {
     return build(inputStream, null, null);
   }
 

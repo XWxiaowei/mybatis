@@ -93,6 +93,7 @@ public class CacheBuilder {
   }
 
   public Cache build() {
+//    设置默认的缓存类型（PerpetualCache）和缓存装饰器(LruCache)
     setDefaultImplementations();
     //先new一个base的cache(PerpetualCache)
     Cache cache = newBaseCacheInstance(implementation, id);

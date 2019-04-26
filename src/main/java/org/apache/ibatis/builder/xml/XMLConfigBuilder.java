@@ -541,11 +541,14 @@ public class XMLConfigBuilder extends BaseBuilder {
         if ("package".equals(child.getName())) {
           //10.4自动扫描包下所有映射器
           String mapperPackage = child.getStringAttribute("name");
+//          从指定的包中查找mapper接口，并根据mapper接口解析映射配置
           configuration.addMappers(mapperPackage);
         } else {
+//          获取resource/url/class等属性
           String resource = child.getStringAttribute("resource");
           String url = child.getStringAttribute("url");
           String mapperClass = child.getStringAttribute("class");
+            //resource 不为空，且其他两者为空，则从指定路径中加载配置
           if (resource != null && url == null && mapperClass == null) {
             //10.1使用类路径
             ErrorContext.instance().resource(resource);
@@ -567,6 +570,7 @@ public class XMLConfigBuilder extends BaseBuilder {
             //直接把这个映射加入配置
             configuration.addMapper(mapperInterface);
           } else {
+//            以上条件都不满足，则抛出异常
             throw new BuilderException("A mapper element may only specify a url, resource or class, but not more than one.");
           }
         }

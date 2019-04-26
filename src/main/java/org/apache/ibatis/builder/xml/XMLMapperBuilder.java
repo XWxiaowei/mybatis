@@ -99,13 +99,13 @@ public class XMLMapperBuilder extends BaseBuilder {
     if (!configuration.isResourceLoaded(resource)) {
       //配置mapper
       configurationElement(parser.evalNode("/mapper"));
-      //标记一下，已经加载过了
+      //添加资源路径到"已解析资源集合"中
       configuration.addLoadedResource(resource);
       //绑定映射器到namespace
       bindMapperForNamespace();
     }
 
-    //还有没解析完的东东这里接着解析？  
+    //处理未完成解析的节点
     parsePendingResultMaps();
     parsePendingChacheRefs();
     parsePendingStatements();
@@ -123,30 +123,30 @@ public class XMLMapperBuilder extends BaseBuilder {
 //	</mapper>
   private void configurationElement(XNode context) {
     try {
-      //1.配置namespace
+      //1.获取namespace
       String namespace = context.getStringAttribute("namespace");
       if (namespace.equals("")) {
         throw new BuilderException("Mapper's namespace cannot be empty");
       }
       builderAssistant.setCurrentNamespace(namespace);
-      //2.配置cache-ref
+      //2.解析cache-ref
       cacheRefElement(context.evalNode("cache-ref"));
-      //3.配置cache
+      //3.解析cache
       cacheElement(context.evalNode("cache"));
-      //4.配置parameterMap(已经废弃,老式风格的参数映射)
+      //4.解析parameterMap(已经废弃,老式风格的参数映射)
       parameterMapElement(context.evalNodes("/mapper/parameterMap"));
-      //5.配置resultMap(高级功能)
+      //5.解析resultMap(高级功能)
       resultMapElements(context.evalNodes("/mapper/resultMap"));
-      //6.配置sql(定义可重用的 SQL 代码段)
+      //6.解析sql(定义可重用的 SQL 代码段)
       sqlElement(context.evalNodes("/mapper/sql"));
-      //7.配置select|insert|update|delete TODO
+      //7.解析select|insert|update|delete TODO
       buildStatementFromContext(context.evalNodes("select|insert|update|delete"));
     } catch (Exception e) {
       throw new BuilderException("Error parsing Mapper XML. Cause: " + e, e);
     }
   }
 
-  //7.配置select|insert|update|delete
+  //7.解析select|insert|update|delete
   private void buildStatementFromContext(List<XNode> list) {
     //调用7.1构建语句
     if (configuration.getDatabaseId() != null) {
@@ -231,14 +231,20 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
   }
 
-  //3.配置cache
+/*  //3.配置cache
 //  <cache
 //  eviction="FIFO"
 //  flushInterval="60000"
 //  size="512"
 //  readOnly="true"/>
+//  1. 按先进先出的策略淘汰缓存项
+2. 缓存的容量为512个对象引用
+3. 缓存每隔60秒刷新一次
+4. 缓存返回的对象是写安全的，即在外部修改对象不会影响到缓存内部存储对象
+*/
   private void cacheElement(XNode context) throws Exception {
     if (context != null) {
+
       String type = context.getStringAttribute("type", "PERPETUAL");
       Class<? extends Cache> typeClass = typeAliasRegistry.resolveAlias(type);
       String eviction = context.getStringAttribute("eviction", "LRU");

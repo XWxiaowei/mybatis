@@ -149,7 +149,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
         .build();
     //加入缓存
     configuration.addCache(cache);
-    //当前的缓存
+    //设置currentCache遍历，即当前使用的缓存
     currentCache = cache;
     return cache;
   }
