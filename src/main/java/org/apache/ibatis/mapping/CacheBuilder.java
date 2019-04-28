@@ -92,14 +92,18 @@ public class CacheBuilder {
     return this;
   }
 
+  /**
+   * @return
+   */
   public Cache build() {
-//    设置默认的缓存类型（PerpetualCache）和缓存装饰器(LruCache)
+//   1. 设置默认的缓存类型（PerpetualCache）和缓存装饰器(LruCache)
     setDefaultImplementations();
-    //先new一个base的cache(PerpetualCache)
+    //通过反射创建缓存
     Cache cache = newBaseCacheInstance(implementation, id);
-    //设额外属性
+    //设额外属性，初始化Cache对象
     setCacheProperties(cache);
     // issue #352, do not apply decorators to custom caches
+//  2.  仅对内置缓存PerpetualCache应用装饰器
     if (PerpetualCache.class.equals(cache.getClass())) {
       for (Class<? extends Cache> decorator : decorators) {
           //装饰者模式一个个包装cache
@@ -107,20 +111,26 @@ public class CacheBuilder {
         //又要来一遍设额外属性
         setCacheProperties(cache);
       }
-      //最后附加上标准的装饰者
+      //3. 应用标准的装饰者，比如LoggingCache,SynchronizedCache
       cache = setStandardDecorators(cache);
     } else if (!LoggingCache.class.isAssignableFrom(cache.getClass())) {
-        //如果是custom缓存，且不是日志，要加日志
+        //4.如果是custom缓存，且不是日志，要加日志
       cache = new LoggingCache(cache);
     }
     return cache;
   }
 
   private void setDefaultImplementations() {
-      //又是一重保险，如果为null则设默认值,和XMLMapperBuilder.cacheElement以及MapperBuilderAssistant.useNewCache逻辑重复了
+      //又是一重保险，如果为null则设默认值,
+    // 虽然和XMLMapperBuilder.cacheElement
+    // 以及MapperBuilderAssistant.useNewCache逻辑重复了，但是还是有必要
+//如果用户忘记设置implementation或者人为的将implementation设为空，会导致
+//build方法在构建实例时触发空指针异常。
     if (implementation == null) {
+//      设置默认的缓存实现类
       implementation = PerpetualCache.class;
       if (decorators.isEmpty()) {
+//        添加LruCache装饰器
         decorators.add(LruCache.class);
       }
     }
@@ -129,6 +139,7 @@ public class CacheBuilder {
   //最后附加上标准的装饰者
   private Cache setStandardDecorators(Cache cache) {
     try {
+//      创建"元信息"对象
       MetaObject metaCache = SystemMetaObject.forObject(cache);
       if (size != null && metaCache.hasSetter("size")) {
         metaCache.setValue("size", size);
@@ -157,18 +168,29 @@ public class CacheBuilder {
 
   private void setCacheProperties(Cache cache) {
     if (properties != null) {
+//      为缓存实例生成一个"元信息"实例，forObject方法调用层次比较深，
+//      但最终调用了MetaClass的forClass方法
       MetaObject metaCache = SystemMetaObject.forObject(cache);
       //用反射设置额外的property属性
       for (Map.Entry<Object, Object> entry : properties.entrySet()) {
         String name = (String) entry.getKey();
         String value = (String) entry.getValue();
+        //检测cache是否有该属性对应的setter方法
         if (metaCache.hasSetter(name)) {
+//          获取setter方法的参数类型
           Class<?> type = metaCache.getSetterType(name);
-          //下面就是各种基本类型的判断了，味同嚼蜡但是又不得不写
+          //根据参数类型对属性值进行转换，并将转换后的值
+//          通过setter方法设置到Cache实例中。
           if (String.class == type) {
             metaCache.setValue(name, value);
           } else if (int.class == type
               || Integer.class == type) {
+            /*
+             * 此处及以下分支包含两个步骤：
+             * 1. 类型装换 ->Integer.valueOf(value)
+             * 2. 将转换后的值设置到缓存实例中->
+             *    metaCache.setValue(name,value)
+             */
             metaCache.setValue(name, Integer.valueOf(value));
           } else if (long.class == type
               || Long.class == type) {

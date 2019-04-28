@@ -137,7 +137,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
       //这里面又判断了一下是否为null就用默认值，有点和XMLMapperBuilder.cacheElement逻辑重复了
     typeClass = valueOrDefault(typeClass, PerpetualCache.class);
     evictionClass = valueOrDefault(evictionClass, LruCache.class);
-    //调用CacheBuilder构建cache,id=currentNamespace
+    //调用CacheBuilder构建cache,id=currentNamespace（使用建造者模式构建缓存实例）
     Cache cache = new CacheBuilder(currentNamespace)
         .implementation(typeClass)
         .addDecorator(evictionClass)
@@ -147,7 +147,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
         .blocking(blocking)
         .properties(props)
         .build();
-    //加入缓存
+    //添加缓存到Configuration对象中
     configuration.addCache(cache);
     //设置currentCache遍历，即当前使用的缓存
     currentCache = cache;
