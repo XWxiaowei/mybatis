@@ -333,9 +333,10 @@ public abstract class BaseExecutor implements Executor {
   //从数据库查
   private <E> List<E> queryFromDatabase(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql) throws SQLException {
     List<E> list;
-    //先向缓存中放入占位符？？？
+    //先向缓存中放入占位符
     localCache.putObject(key, EXECUTION_PLACEHOLDER);
     try {
+//      调用doQuery进行查询
       list = doQuery(ms, parameter, rowBounds, resultHandler, boundSql);
     } finally {
       //最后删除占位符

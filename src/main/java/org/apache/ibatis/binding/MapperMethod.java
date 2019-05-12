@@ -53,7 +53,9 @@ public class MapperMethod {
     Object result;
     //可以看到执行时就是4种情况，insert|update|delete|select，分别调用SqlSession的4大类方法
     if (SqlCommandType.INSERT == command.getType()) {
+//      对用户传入的参数进行转换，下同
       Object param = method.convertArgsToSqlCommandParam(args);
+// 执行插入操作，rowCountResult方法用于处理返回值
       result = rowCountResult(sqlSession.insert(command.getName(), param));
     } else if (SqlCommandType.UPDATE == command.getType()) {
       Object param = method.convertArgsToSqlCommandParam(args);
@@ -61,9 +63,14 @@ public class MapperMethod {
     } else if (SqlCommandType.DELETE == command.getType()) {
       Object param = method.convertArgsToSqlCommandParam(args);
       result = rowCountResult(sqlSession.delete(command.getName(), param));
-    } else if (SqlCommandType.SELECT == command.getType()) {
+    }
+//    根据目标返回方法的返回类型进行相应的查询操作。
+    else if (SqlCommandType.SELECT == command.getType()) {
       if (method.returnsVoid() && method.hasResultHandler()) {
-        //如果有结果处理器
+        /*
+          如果方法返回值为void，但参数列表中包含ResultHandler,
+          想通过ResultHandler的方式获取查询结果，而非通过返回值获取结果
+        * */
         executeWithResultHandler(sqlSession, args);
         result = null;
       } else if (method.returnsMany()) {
@@ -80,6 +87,7 @@ public class MapperMethod {
     } else {
       throw new BindingException("Unknown execution method for: " + command.getName());
     }
+//    如果方法的返回值是基本类型，而返回值却为null，此种情况下应抛出异常
     if (result == null && method.getReturnType().isPrimitive() && !method.returnsVoid()) {
       throw new BindingException("Mapper method '" + command.getName() 
           + " attempted to return null from a method with a primitive return type (" + method.getReturnType() + ").");
@@ -206,8 +214,12 @@ public class MapperMethod {
         }
       }
       if (ms == null) {
+        /*
+        * 若ms==null 且方法无@Flush 注解，此时抛出异常
+        * */
         throw new BindingException("Invalid bound statement (not found): " + statementName);
       }
+      //设置name和type变量
       name = ms.getId();
       type = ms.getSqlCommandType();
       if (type == SqlCommandType.UNKNOWN) {
@@ -224,6 +236,10 @@ public class MapperMethod {
     }
   }
 
+  /**
+   * 保存了一些和目标方法相关的信息。
+   * 比如目标方法的返回类型，目标方法的参数列表信息等。
+   */
   //方法签名，静态内部类
   public static class MethodSignature {
 
@@ -238,9 +254,12 @@ public class MapperMethod {
     private final boolean hasNamedParameters;
 
     public MethodSignature(Configuration configuration, Method method) {
+      //  通过反射解析方法返回类型
       this.returnType = method.getReturnType();
+      // 检测返回值类型是否是 void、集合或数组、Cursor、Map 等
       this.returnsVoid = void.class.equals(this.returnType);
       this.returnsMany = (configuration.getObjectFactory().isCollection(this.returnType) || this.returnType.isArray());
+//      解析@MapKey注解，获取注解内容
       this.mapKey = getMapKey(method);
       this.returnsMap = (this.mapKey != null);
       this.hasNamedParameters = hasNamedParams(method);
@@ -249,6 +268,7 @@ public class MapperMethod {
       this.rowBoundsIndex = getUniqueParamIndex(method, RowBounds.class);
       //记下ResultHandler是第几个参数
       this.resultHandlerIndex = getUniqueParamIndex(method, ResultHandler.class);
+//      解析参数列表
       this.params = Collections.unmodifiableSortedMap(getParams(method, this.hasNamedParameters));
     }
 
@@ -259,6 +279,14 @@ public class MapperMethod {
         return null;
       } else if (!hasNamedParameters && paramCount == 1) {
         //如果只有一个参数
+        /* 如果方法参数列表无@Param注解，且
+         仅有一个非特别参数，则返回该参数的值，
+         ** 比如如下方法：
+         *     List findList(RowBounds rb, String name)
+         * names 如下：
+         *     names = {1 : "0"}
+         * 此种情况下，返回 args[params.keySet().iterator().next().intValue()]，即 args[1] -> name
+         */
         return args[params.keySet().iterator().next().intValue()];
       } else {
         //否则，返回一个ParamMap，修改参数名，参数名就是其位置
