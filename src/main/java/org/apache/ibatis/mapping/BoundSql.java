@@ -34,15 +34,33 @@ import org.apache.ibatis.session.Configuration;
  * @author Clinton Begin
  */
 /**
- * 绑定的SQL,是从SqlSource而来，将动态内容都处理完成得到的SQL语句字符串，其中包括?,还有绑定的参数
+ * 绑定的SQL,是从SqlSource而来，将动态内容都处理完成得到的SQL语句字符串，
+ * 其中包括?,还有绑定的参数
  * 
  */
 public class BoundSql {
 
+  /**
+   * 一个完整的SQL语句，可能会包含问号？占位符
+   */
   private String sql;
+  /**
+   * 参数映射列表，SQL中的每个#{xxx}
+   * 占位符都会被解析成相应的ParameterMapping对象
+   */
   private List<ParameterMapping> parameterMappings;
+  /**
+   * 运行时参数，即用户传入的参数，比如Article对象，
+   * 或是其他的参数
+   */
   private Object parameterObject;
+  /**
+   * 附加参数集合，用户存储一些额外的信息，比如databaseId等
+   */
   private Map<String, Object> additionalParameters;
+  /**
+   * additionalParameters的元信息对象
+   */
   private MetaObject metaParameters;
 
   public BoundSql(Configuration configuration, String sql, List<ParameterMapping> parameterMappings, Object parameterObject) {

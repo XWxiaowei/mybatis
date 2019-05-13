@@ -53,6 +53,7 @@ public class DynamicSqlSource implements SqlSource {
     SqlSource sqlSource = sqlSourceParser.parse(context.getSql(), parameterType, context.getBindings());
 	//看似是又去递归调用SqlSource.getBoundSql，其实因为是StaticSqlSource，所以没问题，不是递归调用
     BoundSql boundSql = sqlSource.getBoundSql(parameterObject);
+//  将DynamicContext的ContextMap中的内容拷贝到BoundSql中
     for (Map.Entry<String, Object> entry : context.getBindings().entrySet()) {
       boundSql.setAdditionalParameter(entry.getKey(), entry.getValue());
     }

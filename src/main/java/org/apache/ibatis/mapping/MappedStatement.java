@@ -288,6 +288,11 @@ public final class MappedStatement {
     //剩下的可以暂时忽略
     List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
     if (parameterMappings == null || parameterMappings.isEmpty()) {
+      /*
+      * 创建新的BoundSql,这里的parameterMap是ParameterMap类型。
+      * 由<ParameterMap> 节点进行配置，该节点已经废弃
+      * parameterMap.getParameterMappings() 返回空集合
+      * */
       boundSql = new BoundSql(configuration, boundSql.getSql(), parameterMap.getParameterMappings(), parameterObject);
     }
 

@@ -51,8 +51,11 @@ public class TrimSqlNode implements SqlNode {
 
   @Override
   public boolean apply(DynamicContext context) {
+//    创建具有过滤功能的DynamicContext
     FilteredDynamicContext filteredDynamicContext = new FilteredDynamicContext(context);
+//   解析节点内容
     boolean result = contents.apply(filteredDynamicContext);
+//    过滤掉前缀和后缀
     filteredDynamicContext.applyAll();
     return result;
   }
@@ -123,12 +126,15 @@ public class TrimSqlNode implements SqlNode {
         prefixApplied = true;
         if (prefixesToOverride != null) {
           for (String toRemove : prefixesToOverride) {
+//            检测当前sql字符串是否包含toRemove前缀，比如 'AND','AND\t'
             if (trimmedUppercaseSql.startsWith(toRemove)) {
+//              移除前缀
               sql.delete(0, toRemove.trim().length());
               break;
             }
           }
         }
+//        插入前缀，比如WHERE
         if (prefix != null) {
           sql.insert(0, " ");
           sql.insert(0, prefix);
@@ -136,6 +142,11 @@ public class TrimSqlNode implements SqlNode {
       }
     }
 
+    /**
+     * 插入后缀
+     * @param sql
+     * @param trimmedUppercaseSql
+     */
     private void applySuffix(StringBuilder sql, String trimmedUppercaseSql) {
       if (!suffixApplied) {
         suffixApplied = true;
