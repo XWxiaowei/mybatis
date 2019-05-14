@@ -90,7 +90,7 @@ public class PreparedStatementHandler extends BaseStatementHandler {
 
   @Override
   public void parameterize(Statement statement) throws SQLException {
-    //调用ParameterHandler.setParameters
+    //通过参数处理器ParameterHandler设置运行时参数到PreparedStatement中
     parameterHandler.setParameters((PreparedStatement) statement);
   }
 

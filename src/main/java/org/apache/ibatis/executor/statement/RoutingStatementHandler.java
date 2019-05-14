@@ -46,6 +46,7 @@ public class RoutingStatementHandler implements StatementHandler {
       case STATEMENT:
         delegate = new SimpleStatementHandler(executor, ms, parameter, rowBounds, resultHandler, boundSql);
         break;
+//        默认情况下statementType值为PREPARED
       case PREPARED:
         delegate = new PreparedStatementHandler(executor, ms, parameter, rowBounds, resultHandler, boundSql);
         break;
