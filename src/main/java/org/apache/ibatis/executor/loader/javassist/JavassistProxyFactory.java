@@ -150,6 +150,10 @@ public class JavassistProxyFactory implements org.apache.ibatis.executor.loader.
             }
           } else {
             if (lazyLoader.size() > 0 && !FINALIZE_METHOD.equals(methodName)) {
+              /*
+              * 如果aggressive为true，或触发方法（比如equal,hashCode等）被调用，
+              * 则加载所有的延迟加载的数据
+              * */
               if (aggressive || lazyLoadTriggerMethods.contains(methodName)) {
                 lazyLoader.loadAll();
               } else if (PropertyNamer.isProperty(methodName)) {

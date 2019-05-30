@@ -55,6 +55,7 @@ public class ResultLoaderMap {
 
   //把要延迟加载的属性记到ResultLoaderMap里（一个哈希表）
   public void addLoader(String property, MetaObject metaResultObject, ResultLoader resultLoader) {
+//   将属性名转为大写
     String upperFirst = getUppercaseFirstProperty(property);
     if (!upperFirst.equalsIgnoreCase(property) && loaderMap.containsKey(upperFirst)) {
       throw new ExecutorException("Nested lazy loaded result property '" + property +
@@ -66,6 +67,7 @@ public class ResultLoaderMap {
 //    if (lazyLoader.hasLoader(property)) {
 //        lazyLoader.load(property);
 //    }
+//    创建LoadPair,并将<大写属性名，LoadPair对象>键值对添加到loaderMap中
     loaderMap.put(upperFirst, new LoadPair(property, metaResultObject, resultLoader));
   }
 

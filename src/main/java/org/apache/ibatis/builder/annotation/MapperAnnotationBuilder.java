@@ -117,17 +117,23 @@ public class MapperAnnotationBuilder {
 
   public void parse() {
     String resource = type.toString();
+    //如果没有加载过再加载，防止重复加载
     if (!configuration.isResourceLoaded(resource)) {
+      //加载映射文件，内部逻辑有创建XMLMapperBuilder对象，并调用parse方法。
       loadXmlResource();
+      //添加资源路径到"已解析资源集合"中
       configuration.addLoadedResource(resource);
       assistant.setCurrentNamespace(type.getName());
+      //解析cache
       parseCache();
+      //解析cacheRef
       parseCacheRef();
       Method[] methods = type.getMethods();
       for (Method method : methods) {
         try {
           // issue #237
           if (!method.isBridge()) {
+            //解析sql,ResultMap
             parseStatement(method);
           }
         } catch (IncompleteElementException e) {

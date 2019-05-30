@@ -128,15 +128,22 @@ class ResultSetWrapper {
     List<String> mappedColumnNames = new ArrayList<String>();
     List<String> unmappedColumnNames = new ArrayList<String>();
     final String upperColumnPrefix = columnPrefix == null ? null : columnPrefix.toUpperCase(Locale.ENGLISH);
+//    为<resultMap>中的列名拼接前缀
     final Set<String> mappedColumns = prependPrefixes(resultMap.getMappedColumns(), upperColumnPrefix);
+    /*
+    * 遍历columnNames,columnNames 是ResultSetWrapper的成员变量
+    * 保存了当前结果集中的所有列名
+    * */
     for (String columnName : columnNames) {
       final String upperColumnName = columnName.toUpperCase(Locale.ENGLISH);
+//     检测已映射列名集合中是否包含当前列名
       if (mappedColumns.contains(upperColumnName)) {
         mappedColumnNames.add(upperColumnName);
       } else {
         unmappedColumnNames.add(columnName);
       }
     }
+//    缓存列名集合
     mappedColumnNamesMap.put(getMapKey(resultMap, columnPrefix), mappedColumnNames);
     unMappedColumnNamesMap.put(getMapKey(resultMap, columnPrefix), unmappedColumnNames);
   }

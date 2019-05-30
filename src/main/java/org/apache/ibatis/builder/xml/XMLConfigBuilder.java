@@ -509,29 +509,29 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
   }
 
-	//10.映射器
-//	10.1使用类路径
+//	//10.映射器
+////	10.1使用类路径
 //	<mappers>
 //	  <mapper resource="org/mybatis/builder/AuthorMapper.xml"/>
 //	  <mapper resource="org/mybatis/builder/BlogMapper.xml"/>
 //	  <mapper resource="org/mybatis/builder/PostMapper.xml"/>
 //	</mappers>
-//
-//	10.2使用绝对url路径
+////
+////	10.2使用绝对url路径
 //	<mappers>
 //	  <mapper url="file:///var/mappers/AuthorMapper.xml"/>
 //	  <mapper url="file:///var/mappers/BlogMapper.xml"/>
 //	  <mapper url="file:///var/mappers/PostMapper.xml"/>
 //	</mappers>
-//
-//	10.3使用java类名
+////
+////	10.3使用java类名
 //	<mappers>
 //	  <mapper class="org.mybatis.builder.AuthorMapper"/>
 //	  <mapper class="org.mybatis.builder.BlogMapper"/>
 //	  <mapper class="org.mybatis.builder.PostMapper"/>
 //	</mappers>
-//
-//	10.4自动扫描包下所有映射器
+////
+////	10.4自动扫描包下所有映射器
 //	<mappers>
 //	  <package name="org.mybatis.builder"/>
 //	</mappers>

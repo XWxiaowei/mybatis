@@ -139,7 +139,7 @@ public class XMLMapperBuilder extends BaseBuilder {
       resultMapElements(context.evalNodes("/mapper/resultMap"));
       //6.解析sql(定义可重用的 SQL 代码段)
       sqlElement(context.evalNodes("/mapper/sql"));
-      //7.解析select|insert|update|delete TODO
+      //7.解析select|insert|update|delete
       buildStatementFromContext(context.evalNodes("select|insert|update|delete"));
     } catch (Exception e) {
       throw new BuilderException("Error parsing Mapper XML. Cause: " + e, e);
@@ -231,17 +231,16 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
   }
 
-/*  //3.配置cache
+  //3.配置cache
 //  <cache
 //  eviction="FIFO"
 //  flushInterval="60000"
 //  size="512"
 //  readOnly="true"/>
 //  1. 按先进先出的策略淘汰缓存项
-2. 缓存的容量为512个对象引用
-3. 缓存每隔60秒刷新一次
-4. 缓存返回的对象是写安全的，即在外部修改对象不会影响到缓存内部存储对象
-*/
+//2. 缓存的容量为512个对象引用
+//3. 缓存每隔60秒刷新一次
+//4. 缓存返回的对象是写安全的，即在外部修改对象不会影响到缓存内部存储对象
   private void cacheElement(XNode context) throws Exception {
     if (context != null) {
 
