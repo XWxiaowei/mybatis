@@ -1,0 +1,23 @@
+@startuml
+autonumber
+actor Actor
+activate Actor
+Actor-> DefaultSqlSessionFactory : getMapper(class)
+activate DefaultSqlSessionFactory
+DefaultSqlSessionFactory -> Configuration :getMapper(class,sqlSession)
+activate Configuration
+Configuration -> MapperRegistry : getMapper(type, sqlSession)
+activate MapperRegistry
+MapperRegistry -> MapperProxyFactory : 构造方法
+activate MapperProxyFactory
+MapperProxyFactory -> MapperProxyFactory: newInstance(mapperProxy)
+MapperProxyFactory -->MapperRegistry : 返回 mapperProxy
+deactivate MapperProxyFactory
+MapperRegistry -->Configuration : 返回 mapperProxy
+deactivate MapperRegistry
+Configuration --> DefaultSqlSessionFactory : 返回 mapperProxy
+deactivate Configuration
+DefaultSqlSessionFactory --> Actor : 返回 mapperProxy
+deactivate DefaultSqlSessionFactory
+deactivate Actor
+@enduml

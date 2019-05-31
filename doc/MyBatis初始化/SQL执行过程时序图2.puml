@@ -1,0 +1,31 @@
+@startuml
+autonumber
+actor Actor
+activate Actor
+Actor -> MapperProxy : invoke(...)
+activate MapperProxy
+MapperProxy -> MapperMethod : execute(sqlSession,...)
+activate MapperMethod
+MapperMethod -> MapperMethod : 对应的增删改查\n（CURD）的方法\n核心方法
+MapperMethod -> DefaultSqlSession: 对应的CURD方法
+activate DefaultSqlSession
+DefaultSqlSession -> SimpleExecutor : query(...)
+activate SimpleExecutor
+note right :第五步注释\nSimpleExecutor\n继承于BaseExecutor
+SimpleExecutor -> SimpleExecutor: queryFromDatabase(...)
+SimpleExecutor -> SimpleExecutor: doQuery(...)
+SimpleExecutor -> PrepareStatementHandler : query(...)
+activate PrepareStatementHandler
+PrepareStatementHandler -> PreparedStatement :  execute()\n执行SQL
+PrepareStatementHandler -> DefaultResultSetHandler : handleResultSets(preparedStatement)
+activate DefaultResultSetHandler
+DefaultResultSetHandler --> PrepareStatementHandler : 返回最终结果
+deactivate DefaultResultSetHandler
+PrepareStatementHandler --> SimpleExecutor : 返回最终结果
+deactivate PrepareStatementHandler
+SimpleExecutor --> DefaultSqlSession : 返回最终结果
+DefaultSqlSession -->Actor: 返回最终结果
+deactivate SimpleExecutor
+deactivate DefaultSqlSession
+deactivate Actor
+@enduml
